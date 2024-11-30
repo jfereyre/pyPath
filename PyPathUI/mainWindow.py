@@ -73,9 +73,7 @@ class pathCanvas(Frame):
                 l_element.setColor('pink')
     
     def reInit(self):
-        for l_col_index in range(0, self.max_col_index+1):
-            for l_row_index in range(0, self.max_row_index+1):
-                self._m_cells[l_col_index][l_row_index].free()
+        self.releaseOccupied()
 
         self._m_robot_start_cell = self._m_cells[0][0]
         self._m_robot_end_cell = self._m_cells[self.max_col_index][self.max_row_index]
@@ -83,21 +81,44 @@ class pathCanvas(Frame):
         self._m_robot_start_cell.setColor('green')
         self._m_robot_end_cell.setColor('green')                
 
-    @staticmethod
-    def start():
-        root = Tk()
-        ex = pathCanvas(800, 600, 20, 20)
-        root.geometry("800x700+300+300")
+    def releaseOccupied(self):
+        for l_col_index in range(0, self.max_col_index+1):
+            for l_row_index in range(0, self.max_row_index+1):
+                self._m_cells[l_col_index][l_row_index].free()
 
-        l_find_path_button = Button(root, text="FindPath", command=ex.findPath)
+    def setCellOccupied(self, a_x:int, a_y: int):
+        self._m_cells[a_x][a_y].occupied()
 
-        l_find_path_button.pack(side='bottom')
+g_ex = None
 
-        l_reset_button = Button(root, text="Reset", command=ex.reInit)
+def build():
+    global g_ex 
+    root = Tk()
+    g_ex = pathCanvas(800, 600, 20, 20)
+    root.geometry("800x700+300+300")
 
-        l_reset_button.pack(side='bottom')
+    l_find_path_button = Button(root, text="FindPath", command=g_ex.findPath)
 
-        # Mouse click tracking
-        root.bind('<Button-3>', ex.button)
+    l_find_path_button.pack(side='bottom')
 
-        root.mainloop()
+    l_reset_button = Button(root, text="Reset", command=g_ex.reInit)
+
+    l_reset_button.pack(side='bottom')
+
+    # Mouse click tracking
+    root.bind('<Button-3>', g_ex.button)
+
+    return root
+
+def setOccupied(a_topLeft: tuple, a_bottomRight: tuple):
+
+    global g_ex
+
+    g_ex.releaseOccupied()
+
+    l_topLeftCell = g_ex.getNearestCell(a_topLeft[0], a_topLeft[1])
+    l_bottomRightCell = g_ex.getNearestCell(a_bottomRight[0], a_bottomRight[1])
+
+    for l_x in range(l_topLeftCell.col, l_bottomRightCell.col):
+        for l_y in range(l_topLeftCell.row, l_bottomRightCell.row):
+            g_ex.setCellOccupied(l_x, l_y)
