@@ -17,8 +17,8 @@ class RobotUI:
 
     def move(self, a_new_x: int = 0, a_new_y: int = 0):
         # Compute move
-        l_d_x = a_new_x - self._m_x
-        l_d_y = a_new_y - self._m_y
+        l_d_x = a_new_x - self._m_x 
+        l_d_y = a_new_y - self._m_y 
         
         self._m_canvas.move(self._m_ovale, l_d_x, l_d_y)
         

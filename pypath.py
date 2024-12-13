@@ -2,7 +2,7 @@
  
 from PyPath.cell import Cell
 
-from PyPathUI.mainWindow import build
+from pyPath.PyPathUI.pathCanvas import build
 
 def main():
     l_root = build()

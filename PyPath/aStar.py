@@ -1,4 +1,5 @@
 from PyPathUI.cellUI import CellUI
+from PyPath.cell import CellMatrix
 import heapq
 
 class Node:
@@ -13,8 +14,8 @@ class Node:
         return self.f < other.f
 
 class Algo:
-    def __init__(self, a_cells_dict: dict, a_max_col_index:int, a_max_row_index: int):
-        self._m_cells_dict = a_cells_dict
+    def __init__(self, a_cells: CellMatrix, a_max_col_index:int, a_max_row_index: int):
+        self._m_cells = a_cells
         self._m_max_col_index = a_max_col_index
         self._m_max_row_index = a_max_row_index
 
@@ -35,7 +36,7 @@ class Algo:
             
             closed_set.add(current.state)
             for neighbor in self.neighbors(current.state):
-                if self._m_cells_dict[neighbor[0]][neighbor[1]].isOccupied():
+                if self._m_cells.get(neighbor[0],neighbor[1]).isOccupied():
                     continue
                 if neighbor in closed_set:
                     continue
@@ -53,7 +54,7 @@ class Algo:
         # Cette fonction doit retourner les voisins d'un état donné
         # Par exemple, pour une grille :
         x, y = state
-        return self._m_cells_dict[x][y].neighbors
+        return self._m_cells.neighbors(x,y)
 
 
     @staticmethod
@@ -64,7 +65,7 @@ class Algo:
         return abs(x1 - x2) + abs(y1 - y2)
 
 
-def AStar(a_start:CellUI, a_end: CellUI, a_cells: dict, a_max_col_index: int, a_max_row_index: int):
+def AStar(a_start:CellUI, a_end: CellUI, a_cells: CellMatrix, a_max_col_index: int, a_max_row_index: int):
 
     l_astar = Algo(a_cells, a_max_col_index, a_max_row_index)
 
@@ -76,6 +77,6 @@ def AStar(a_start:CellUI, a_end: CellUI, a_cells: dict, a_max_col_index: int, a_
     l_path_cells = []
     if not path == None:
         for l_path in path:
-            l_path_cells.append(a_cells[l_path[0]][l_path[1]])
+            l_path_cells.append(a_cells.get(l_path[0],l_path[1]))
 
     return l_path_cells

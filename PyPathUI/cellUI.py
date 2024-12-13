@@ -1,112 +1,70 @@
-from PyPath.cell import Cell
+from PyPath.cell import Cell, CellMatrix
 from tkinter import Canvas
 
-class CellUI(Cell):
-    """
-    """
-    def __init__(self, canvas: Canvas, a_col_index:int = 0 , a_row_index: int = 0, a_cell_width: int = 0, a_cell_height: int = 0, a_max_col_index: int = 0, a_max_row_index: int = 0):
+class CellMatrixUI(Canvas):
+    
+    def __init__(self, a_cell_matrix: CellMatrix, a_parent, a_width: int, a_height: int):
         """
         """
-        super().__init__(a_col_index * a_cell_width, a_row_index * a_cell_height, (a_col_index + 1) * a_cell_width, (a_row_index + 1) * a_cell_height)
-        
-        self._m_row_index = a_row_index
-        self._m_col_index = a_col_index
+        super().__init__(a_parent, width=a_width, height=a_height)
 
-        self._m_canvas = canvas
-        self._m_rectangle = self._m_canvas.create_rectangle(self._m_x_0, self._m_y_0, self._m_x_1, self._m_y_1, fill='white')
+        self._m_cell_matrix = a_cell_matrix
+        self._m_cells_ui = {}
 
-        self.build_neighborhood(a_max_col_index, a_max_row_index)
+        for l_cell_col in range(0, self._m_cell_matrix.max_col_index):
+            for l_cell_row in range(0, self._m_cell_matrix.max_row_index):
+                self._m_cells_ui.setdefault(l_cell_col, {})[l_cell_row] = CellUI(self, self._m_cell_matrix.get(l_cell_col, l_cell_row))
 
-        self.attach(self)
+    @property
+    def cellHeight(self):
+        return int(self['height']) // self._m_cell_matrix.max_row_index
+    
+    @property
+    def cellWidth(self):
+        return int(self['width']) // self._m_cell_matrix.max_col_index
+
+    def get(self, a_col:int, a_row: int):
+        return self._m_cells_ui[a_col][a_row]
+
+class CellUI(object):
+    """
+    """
+    def __init__(self, a_cell_matrix_ui: CellMatrixUI, a_cell: Cell):
+        """
+        """
+        self._m_cell_matrix_ui = a_cell_matrix_ui
+ 
+        self._m_cell = a_cell
+
+        self._m_rectangle = self._m_cell_matrix_ui.create_rectangle(self._m_cell.col * self._m_cell_matrix_ui.cellHeight,
+                                                            self._m_cell.row * self._m_cell_matrix_ui.cellWidth,
+                                                            (self._m_cell.col + 1) * self._m_cell_matrix_ui.cellHeight,
+                                                            (self._m_cell.row + 1) * self._m_cell_matrix_ui.cellWidth,
+                                                            fill='white')
+
+        self._m_cell.attach(self)
 
     @property
     def row(self):
-        return self._m_row_index
+        return self._m_cell.row
     
     @property
     def col(self):
-        return self._m_col_index
+        return self._m_cell.col
 
     def __str__(self):
-        l_message = "[%d,%d]"  % (self._m_col_index, self._m_row_index)
-        l_message += " - visited " + str(self.visited)
+        l_message = "[%d,%d]"  % (self.col, self.row)
         return l_message
 
     def update(self, l_cell):
         """
         """
-        if self.isOccupied():
-            self._m_canvas.itemconfig(self._m_rectangle, fill='red')
+        if self._m_cell.isOccupied():
+            self._m_cell_matrix_ui.itemconfig(self._m_rectangle, fill='red')
         else:
-            self._m_canvas.itemconfig(self._m_rectangle, fill='white')
+            self._m_cell_matrix_ui.itemconfig(self._m_rectangle, fill='white')
 
     def setColor(self, a_color: str):
-        self._m_canvas.itemconfig(self._m_rectangle, fill=a_color)
+        self._m_cell_matrix_ui.itemconfig(self._m_rectangle, fill=a_color)
 
-    def build_neighborhood(self, a_max_col_index: int = 0, a_max_row_index: int = 0):
-        self._m_neighbors = []
 
-        if self._m_col_index == 0:
-            # First col
-            if self._m_row_index == 0:
-                # First row
-                self._m_neighbors.append((1, 0))
-                # self._m_neighbors.append((1, 1))
-                self._m_neighbors.append((0, 1))
-            elif self._m_row_index == a_max_row_index:
-                # Last row
-                self._m_neighbors.append((1, a_max_row_index))
-                # self._m_neighbors.append((1, a_max_row_index-1))
-                self._m_neighbors.append((0, a_max_row_index-1))
-            else:
-                self._m_neighbors.append((0, self._m_row_index-1))
-                # self._m_neighbors.append((1, self._m_row_index-1))
-                self._m_neighbors.append((1, self._m_row_index))
-                # self._m_neighbors.append((1, self._m_row_index+1))
-                self._m_neighbors.append((0, self._m_row_index+1))
-        elif self._m_col_index == a_max_col_index:
-            # Last col
-            if self._m_row_index == 0:
-                # First row
-                self._m_neighbors.append((a_max_col_index-1, 0))
-                # self._m_neighbors.append((a_max_col_index-1, 1))
-                self._m_neighbors.append((a_max_col_index, 1))
-            elif self._m_row_index == a_max_row_index:
-                # Last row
-                self._m_neighbors.append((a_max_col_index-1, a_max_row_index))
-                # self._m_neighbors.append((a_max_col_index-1, a_max_row_index-1))
-                self._m_neighbors.append((a_max_col_index, a_max_row_index-1))
-            else:
-                self._m_neighbors.append((a_max_col_index, self._m_row_index-1))
-                # self._m_neighbors.append((a_max_col_index-1, self._m_row_index-1))
-                self._m_neighbors.append((a_max_col_index-1, self._m_row_index))
-                # self._m_neighbors.append((a_max_col_index-1, self._m_row_index+1))
-                self._m_neighbors.append((a_max_col_index, self._m_row_index+1))
-        else:
-            if self._m_row_index == 0:
-                # First row
-                self._m_neighbors.append((self._m_col_index-1, 0))
-                # self._m_neighbors.append((self._m_col_index-1, 1))
-                self._m_neighbors.append((self._m_col_index, 1))
-                # self._m_neighbors.append((self._m_col_index+1, 1))
-                self._m_neighbors.append((self._m_col_index+1, 0))
-            elif self._m_row_index == a_max_row_index:
-                # Last row
-                self._m_neighbors.append((self._m_col_index-1, a_max_row_index))
-                # self._m_neighbors.append((self._m_col_index-1, a_max_row_index-1))
-                self._m_neighbors.append((self._m_col_index, a_max_row_index-1))
-                # self._m_neighbors.append((self._m_col_index+1, a_max_row_index-1))
-                self._m_neighbors.append((self._m_col_index+1, a_max_row_index))
-            else:
-                self._m_neighbors.append((self._m_col_index, self._m_row_index-1))
-                # self._m_neighbors.append((self._m_col_index+1, self._m_row_index-1))
-                self._m_neighbors.append((self._m_col_index+1, self._m_row_index))
-                # self._m_neighbors.append((self._m_col_index+1, self._m_row_index+1))
-                self._m_neighbors.append((self._m_col_index, self._m_row_index+1))
-                # self._m_neighbors.append((self._m_col_index-1, self._m_row_index+1))
-                self._m_neighbors.append((self._m_col_index-1, self._m_row_index))
-                # self._m_neighbors.append((self._m_col_index-1, self._m_row_index-1))
-
-    @property
-    def neighbors(self):
-        return self._m_neighbors
