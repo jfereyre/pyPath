@@ -88,3 +88,15 @@ class PathCanvas(Frame):
     def setRobotPosition(self, a_x: int, a_y: int):
         self._m_robot.move(a_x, a_y)
 
+    def setRobotStartCell(self, a_col: int, a_row: int):
+        self._m_robot_start_cell = self._m_cells.get(a_col,a_row)
+
+    def getRobotStartCell(self):
+        return self._m_robot_start_cell
+
+    def setRobotEndCell(self, a_col: int, a_row: int):
+        self._m_robot_end_cell = self._m_cells.get(a_col,a_row)
+
+    def getRobotEndCell(self):
+        return self._m_robot_end_cell
+    
