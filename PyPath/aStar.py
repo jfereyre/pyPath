@@ -65,14 +65,11 @@ class Algo:
         return abs(x1 - x2) + abs(y1 - y2)
 
 
-def AStar(a_start:CellUI, a_end: CellUI, a_cells: CellMatrix, a_max_col_index: int, a_max_row_index: int):
-
-    l_astar = Algo(a_cells, a_max_col_index, a_max_row_index)
+def AStar(a_start:tuple, a_end: tuple, a_cells: CellMatrix):
+    l_astar = Algo(a_cells, a_cells.max_col_index-1, a_cells.max_row_index-1)
 
     # Trouver le chemin du point (0, 0) au point (3, 3) sur une grille
-    start = (a_start.col, a_start.row)
-    goal = (a_end.col, a_end.row)
-    path = l_astar.run(start, goal)
+    path = l_astar.run(a_start, a_end)
  
     l_path_cells = []
     if not path == None:
