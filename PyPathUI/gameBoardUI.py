@@ -1,7 +1,7 @@
-from tkinter import Canvas, Frame, BOTH
+from tkinter import Frame, BOTH
 
 
-from PyPathUI.cellUI import CellUI, CellMatrixUI
+from PyPathUI.cellUI import CellMatrixUI
 from PyPathUI.robotUI import RobotUI
 from PyPath.cell import CellMatrix
 from PyPath.robot import Robot

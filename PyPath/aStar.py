@@ -1,4 +1,3 @@
-from PyPathUI.cellUI import CellUI
 from PyPath.cell import CellMatrix
 import heapq
 
