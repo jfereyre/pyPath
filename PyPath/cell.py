@@ -47,8 +47,8 @@ class CellMatrix():
     def __init__(self, a_nb_cols:int, a_nb_rows:int):
         self._m_cells = {}
 
-        self._m_max_col_index = a_nb_cols;
-        self._m_max_row_index = a_nb_rows;
+        self._m_max_col_index = a_nb_cols-1;
+        self._m_max_row_index = a_nb_rows-1;
 
         for l_col_index in range(0, self._m_max_col_index+1):
             for l_row_index in range(0, self._m_max_row_index+1):

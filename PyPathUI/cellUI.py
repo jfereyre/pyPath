@@ -11,17 +11,17 @@ class CellMatrixUI(Canvas):
         self._m_cell_matrix = a_cell_matrix
         self._m_cells_ui = {}
 
-        for l_cell_col in range(0, self._m_cell_matrix.max_col_index):
-            for l_cell_row in range(0, self._m_cell_matrix.max_row_index):
+        for l_cell_col in range(0, self._m_cell_matrix.max_col_index+1):
+            for l_cell_row in range(0, self._m_cell_matrix.max_row_index+1):
                 self._m_cells_ui.setdefault(l_cell_col, {})[l_cell_row] = CellUI(self, self._m_cell_matrix.get(l_cell_col, l_cell_row))
 
     @property
     def cellHeight(self):
-        return int(self['height']) // self._m_cell_matrix.max_row_index
+        return int(self['height']) // (self._m_cell_matrix.max_row_index+1)
     
     @property
     def cellWidth(self):
-        return int(self['width']) // self._m_cell_matrix.max_col_index
+        return int(self['width']) // (self._m_cell_matrix.max_col_index+1)
 
     def get(self, a_col:int, a_row: int):
         return self._m_cells_ui[a_col][a_row]

@@ -13,8 +13,8 @@ class GameBoardUI(Frame):
 
         self._m_width = a_width
         self._m_height = a_height
-        self._m_cell_width = self._m_width // a_cells.max_col_index
-        self._m_cell_height = self._m_height // a_cells.max_row_index
+        self._m_cell_width = self._m_width // (a_cells.max_col_index+1)
+        self._m_cell_height = self._m_height // (a_cells.max_row_index+1)
 
         self._m_cells = a_cells
         self._m_robot = a_robot
@@ -65,8 +65,6 @@ class GameBoardUI(Frame):
             l_element.setColor('pink')
     
     def reInit(self):
-        self.releaseOccupied()
-
         l_robot_start_position = self._m_robot.getStartPosition()
         l_robot_destination = self._m_robot.getDestination()
 
